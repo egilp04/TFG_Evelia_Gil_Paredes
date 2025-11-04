@@ -10,7 +10,15 @@ export class Usuario {
   private supabaseService = inject(SupabaseService);
   private clientSupaBase = this.supabaseService.getClient();
 
+  private readonly tiposValidos = ['administrador', 'cliente', 'empresa'] as const;
+
   insertUsuario(newUsuario: UsuarioModel): Observable<void> {
+    if (!this.tiposValidos.includes(newUsuario.tipo_usuario)) {
+      return throwError(
+        () =>
+          new Error('tipo de usuario inválido. Debe ser "administrador" o "cliente" o "empresa".')
+      );
+    }
     return from(this.clientSupaBase.from('usuario').insert(newUsuario)).pipe(
       map(({ error }) => {
         if (error) throw error;
@@ -34,6 +42,9 @@ export class Usuario {
   updateUsuario(id: number, changes: Partial<UsuarioModel>): Observable<void> {
     if (typeof id !== 'number' || Number.isNaN(id))
       throwError(() => new Error('El id debe ser numérico'));
+    if (changes.tipo_usuario && !this.tiposValidos.includes(changes.tipo_usuario))
+      return throwError(() => new Error('tipo usuario inválido.'));
+
     return from(this.clientSupaBase.from('usuario').update(changes).eq('id_usuario', id)).pipe(
       map(({ data, error }) => {
         if (error) throw error;

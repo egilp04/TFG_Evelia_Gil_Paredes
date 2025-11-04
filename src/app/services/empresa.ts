@@ -9,6 +9,11 @@ import { EmpresaModel } from '../models/Empresa';
 export class Empresa {
   private supabaseService = inject(SupabaseService);
   private clientSupaBase = this.supabaseService.getClient();
+  private readonly tiposValidosServicios = [
+    'limpieza',
+    'alimentacion',
+    'cuidados personales',
+  ] as const;
 
   insertEmpresa(newEmpresa: EmpresaModel): Observable<void> {
     return from(this.clientSupaBase.from('empresa').insert(newEmpresa)).pipe(
@@ -68,13 +73,23 @@ export class Empresa {
     );
   }
 
-  // getEmpresaByTypeService(tipo:string): Observable<EmpresaModel[]> {
-  //   return from().pipe(
-  //     map(({ data, error }) => {
-  //       if (error) throw Error;
-  //       return (data ?? []) as EmpresaModel[];
-  //     }),
-  //     catchError((err) => throwError(() => err))
-  //   );
-  // }
+  getEmpresaByTypeService(tipo: any): Observable<EmpresaModel[]> {
+    if (!this.tiposValidosServicios.includes(tipo)) {
+      return throwError(
+        () =>
+          new Error(
+            'tipo de servicio inválido. Debe ser "alimentacion" o "limpieza" o "cuidados personales".'
+          )
+      );
+    }
+    return from(
+      this.clientSupaBase.from('empresa').select('*').eq('servicio.tipo_servicio', tipo)
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) throw error;
+        return (data ?? []) as EmpresaModel[];
+      }),
+      catchError((err) => throwError(() => err))
+    );
+  }
 }

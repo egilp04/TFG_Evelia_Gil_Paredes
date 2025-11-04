@@ -9,8 +9,17 @@ import { ServicioModel } from '../models/Servicio';
 export class Servicio {
   private supabaseService = inject(SupabaseService);
   private clientSupaBase = this.supabaseService.getClient();
+  private readonly tiposValidos = ['limpieza', 'alimentacion', 'cuidados personales'] as const;
 
   insertServicio(newServicio: ServicioModel): Observable<void> {
+    if (!this.tiposValidos.includes(newServicio.tipo_servicio)) {
+      return throwError(
+        () =>
+          new Error(
+            'tipo de servicio inválido. Debe ser "alimentacion" o "limpieza" o "cuidados personales".'
+          )
+      );
+    }
     return from(this.clientSupaBase.from('servicio').insert(newServicio)).pipe(
       map(({ error }) => {
         if (error) throwError;
@@ -37,6 +46,9 @@ export class Servicio {
       throwError(() => {
         new Error('ID debe ser numérico');
       });
+    if (changes.tipo_servicio && !this.tiposValidos.includes(changes.tipo_servicio))
+      return throwError(() => new Error('tipo servicio inválido.'));
+
     return from(this.clientSupaBase.from('servicio').update(changes).eq('id_servicio', id)).pipe(
       map(({ error }) => {
         if (error) throwError;
