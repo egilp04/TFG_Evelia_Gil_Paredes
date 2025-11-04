@@ -4,5 +4,5 @@ export interface ServicioModel {
   descripcion: string;
   precio: number;
   id_empresa: number;
-  tipo_servicio: string;
+  tipo_servicio: 'alimentacion' | 'limpieza' | 'cuidados personales';
 }

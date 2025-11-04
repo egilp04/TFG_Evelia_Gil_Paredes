@@ -3,5 +3,5 @@ export interface UsuarioModel {
   telefono: string;
   email: string;
   contrasenia: string;
-  tipo_usuario: string;
+  tipo_usuario: 'administrador' | 'cliente' | 'empresa';
 }
