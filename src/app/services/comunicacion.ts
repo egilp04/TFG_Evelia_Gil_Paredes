@@ -14,7 +14,7 @@ export class Comunicacion {
   private clientSupaBase = this.supabaseService.getClient();
 
   // métodos CRUD
-  insertComunication(comunicacion: ComunicacionModel): Observable<void> {
+  insertComunicacion(comunicacion: ComunicacionModel): Observable<void> {
     if (!this.tiposValidos.includes(comunicacion.tipo_comunicacion)) {
       return throwError(
         () => new Error('tipo_comunicacion inválido. Debe ser "mensaje" o "notificacion".')
@@ -42,13 +42,12 @@ export class Comunicacion {
     );
   }
 
-  updateComunication(id: number, changes: Partial<ComunicacionModel>): Observable<void> {
-    if (typeof id !== 'number' || Number.isNaN(id)) {
+  updateComunicacion(id: number, changes: Partial<ComunicacionModel>): Observable<void> {
+    if (typeof id !== 'number' || Number.isNaN(id))
       return throwError(() => new Error('ID debe ser número.'));
-    }
-    if (changes.tipo_comunicacion && !this.tiposValidos.includes(changes.tipo_comunicacion)) {
+
+    if (changes.tipo_comunicacion && !this.tiposValidos.includes(changes.tipo_comunicacion))
       return throwError(() => new Error('tipo_comunicacion inválido.'));
-    }
 
     return from(this.clientSupaBase.from('comunicacion').update(changes).eq('id', id)).pipe(
       map(({ error }) => {
@@ -59,24 +58,79 @@ export class Comunicacion {
     );
   }
 
-  getDataByUserAndType(
+  getComunicacionByUserAndType(
     id_usuario: string,
     tipo: 'mensaje' | 'notificacion'
   ): Observable<ComunicacionModel[]> {
-    if (typeof id_usuario !== 'number' || Number.isNaN(id_usuario)) {
+    if (typeof id_usuario !== 'number' || Number.isNaN(id_usuario))
       return throwError(() => new Error('ID debe ser número.'));
-    }
-    if (!this.tiposValidos.includes(tipo)) {
+
+    if (!this.tiposValidos.includes(tipo))
       return throwError(
         () => new Error('tipo_comunicacion inválido. Debe ser "mensaje" o "notificacion".')
       );
-    }
+
     return from(
       this.clientSupaBase
         .from('comunicacion')
         .select('*')
         .eq('id_usuario', id_usuario)
         .eq('tipo_comunicacion', tipo)
+        .order('fecha_creacion', { ascending: false })
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) throw error;
+        return (data ?? []) as ComunicacionModel[];
+      }),
+      catchError((err) => throwError(() => err))
+    );
+  }
+
+  getComunicacionByUser(id_usuario: string): Observable<ComunicacionModel[]> {
+    if (typeof id_usuario !== 'number' || Number.isNaN(id_usuario))
+      return throwError(() => new Error('ID debe ser número.'));
+
+    return from(
+      this.clientSupaBase
+        .from('comunicacion')
+        .select('*')
+        .eq('id_usuario', id_usuario)
+        .order('fecha_creacion', { ascending: false })
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) throw error;
+        return (data ?? []) as ComunicacionModel[];
+      }),
+      catchError((err) => throwError(() => err))
+    );
+  }
+
+  getComunicacionByType(tipo: 'mensaje' | 'notificacion'): Observable<ComunicacionModel[]> {
+    if (!this.tiposValidos.includes(tipo))
+      return throwError(
+        () => new Error('tipo_comunicacion inválido. Debe ser "mensaje" o "notificacion".')
+      );
+
+    return from(
+      this.clientSupaBase
+        .from('comunicacion')
+        .select('*')
+        .eq('tipo_comunicacion', tipo)
+        .order('fecha_creacion', { ascending: false })
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) throw error;
+        return (data ?? []) as ComunicacionModel[];
+      }),
+      catchError((err) => throwError(() => err))
+    );
+  }
+
+  getAllComunicacion(): Observable<ComunicacionModel[]> {
+    return from(
+      this.clientSupaBase
+        .from('comunicacion')
+        .select('*')
         .order('fecha_creacion', { ascending: false })
     ).pipe(
       map(({ data, error }) => {
