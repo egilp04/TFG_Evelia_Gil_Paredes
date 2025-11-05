@@ -9,8 +9,15 @@ import { HorarioModel } from '../models/Horario';
 export class Horario {
   private supabaseService = inject(SupabaseService);
   private clientSupaBase = this.supabaseService.getClient();
+  private readonly tiposValidos = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'] as const;
 
   insertHorario(newHorario: HorarioModel): Observable<void> {
+    if (!this.tiposValidos.includes(newHorario.dia_semana)) {
+      return throwError(
+        () =>
+          new Error('Día de la semana inválido')
+      );
+    }
     return from(this.clientSupaBase.from('horario').insert(newHorario)).pipe(
       map(({ error }) => {
         if (error) throwError;
