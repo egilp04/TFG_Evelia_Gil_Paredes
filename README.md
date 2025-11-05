@@ -57,3 +57,31 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Tailwind
+Install Tailwind CSS
+Install @tailwindcss/postcss and its peer dependencies via npm.
+
+npm install tailwindcss @tailwindcss/postcss postcss --force
+
+Configure PostCSS Plugins
+Create a .postcssrc.json file in the root of your project and add the @tailwindcss/postcss plugin to your PostCSS configuration.
+
+{
+  "plugins": {
+    "@tailwindcss/postcss": {}
+  }
+}
+
+Import Tailwind CSS
+Add an @import to ./src/styles.css that imports Tailwind CSS.
+
+@import "tailwindcss";
+
+## Supabase
+Create a Supabase project. 
+Get the SUPABASE_URL y SUPABASE_KEY.
+
+In your Angular project environment:
+npm install @supabase/supabase-js
+
