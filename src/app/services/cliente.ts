@@ -63,3 +63,10 @@ export class Cliente {
     );
   }
 }
+
+// from(this.authService.getCurrentUserId()).pipe(
+//   switchMap(userId => {
+//     if (!userId) throw new Error('No hay usuario logeado');
+//     return this.clienteService.insertCliente({ id_usuario: userId, ... });
+//   })
+// ).subscribe(...);
