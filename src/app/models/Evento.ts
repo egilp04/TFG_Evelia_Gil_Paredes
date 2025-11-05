@@ -3,4 +3,5 @@ export interface EventoModel {
   fecha: string;
   id_usuario: number;
   id_servicio_horario: number;
+  hora: string;
 }
