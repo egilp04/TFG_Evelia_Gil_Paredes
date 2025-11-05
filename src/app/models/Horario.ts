@@ -1,5 +1,5 @@
 export interface HorarioModel {
   id_horario?: number;
-  fecha: string;
+  dia_semana: 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes';
   hora: string;
 }
