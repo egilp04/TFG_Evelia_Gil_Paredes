@@ -4,4 +4,5 @@ export interface UsuarioModel {
   email: string;
   contrasenia: string;
   tipo_usuario: 'administrador' | 'cliente' | 'empresa';
+  nombre: string;
 }
